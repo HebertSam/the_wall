@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div class='header'>
+        <span>CodingDojo Wall</span>
+        <span>Welcome {{ session['user_name'] }}</span>
+        <a href="/logout">log off</a>
+    </div>
+    <form action="/message" method="post">
+    <h3>Post a message</h3>
+    <textarea name="message" id="" cols="30" rows="10"></textarea>
+    <button type="submit">Post message</button>
+    </form>
+  
+        {% for message in message_data %}
+        <div style='border: solid black;'>
+            <span>{{message['user_name']}}</span>
+            <span>{{ message['time'] }}</span>
+            <p>{{ message['message'] }}</p>
+            {% for comment in message_data %}
+                {% if message['message_id'] == message['com_message_id'] %}
+                    {% for id in user_data %}
+                        {% if comment['users_id'] == id['user_id'] %}
+                        <div style='border: solid black;'>
+                            <span>{{ id['user_name'] }}</span>
+                        {% endif %}
+                    {% endfor %}
+                    <span>{{ message['update_at'] }}</span>
+                    <p>{{ message['comment'] }}</p>
+                    </div>
+                {% endif %}
+            {% endfor %}
+            <form action="/comment" method="post">
+            <h5>Comment</h5>
+            <textarea name="comment" cols="30" rows="10"></textarea>
+            <input type="hidden" name="message_id" value="{{ message['message_id'] }}" >
+            <button type="submit">Post Comment</button>
+            </form>
+        </div>
+    {% endfor %}
+    
+</body>
+</html>
