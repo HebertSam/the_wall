@@ -86,49 +86,13 @@ def logout():
 
 @app.route('/wall')
 def wall():
-    
-    # db_users = mysql.query_db('select * from users')
-    # db_messages = mysql.query_db('select * from messages')
-    # db_comments = mysql.query_db('select * from comments')
 
-    message_data = mysql.query_db('select concat(users.first_name, " ", users.last_name) as user_name, users.id as user_id, messages.message as message, messages.updated_at as time, messages.users_id, messages.id as message_id, comments.comment, comments.messages_id as com_message_id, comments.users_id as comm_user_id, comments.update_at from users join messages on users.id = messages.users_id join comments on messages_id = comments.messages_id')
+    message_data = mysql.query_db('select concat(users.first_name, " ", users.last_name) as user_name, users.id as user_id, messages.message as message, messages.updated_at as time, messages.users_id, messages.id as message_id, comments.comment, comments.messages_id as com_message_id, comments.users_id as comm_user_id, comments.update_at, comments.id as comment_id from users join messages on users.id = messages.users_id join comments on messages_id = comments.messages_id')
 
     user_data = mysql.query_db('select concat(users.first_name, " ", users.last_name) as user_name, users.id as user_id from users')
     print user_data
-
-    # template_messages = []
-
-    # for db_message in db_messages:
-    #     template_message = {}
-    #     for db_user in db_users:
-    #         if db_user['id'] == db_message['users_id']:
-    #             template_message['user'] = db_user['first_name'] + ' ' + db_user['last_name']            
-    #     if db_message['updated_at'] > db_message['created_at']:
-    #         template_message['time'] = db_message['updated_at']
-    #     else:
-    #         template_message['time'] = db_message['created_at']
-
-    #     template_message['message'] = db_message['message']
-    #     template_messages.append(template_messages)
-
-    #     for db_comment in db_comments:
-    #         template_comment = {}
-    #         for db_user in db_users:
-    #             if db_user['id'] == db_comment['users_id']:
-    #                 template_comment['user'] = db_user['first_name'] + ' ' + db_user['last_name']
-            
-    #         if db_comment['updated_at'] > db_comment['created_at']:
-    #             template_comment['time'] = db_comment['updated_at']
-    #         else:
-    #             template_comment['time'] = db_comment['created_at']
-
-    #         template_comment['comments'] = db_comment['comment']
-    #         template_message['comment'].append(template_comment)  
-
-
+  
     
-    
-
     return render_template('wall.html', message_data=message_data, user_data=user_data)
 
 @app.route('/message', methods=['post'])
@@ -158,6 +122,22 @@ def post_comment():
     mysql.query_db(comment_query, comment_data)
     return redirect('/wall')
 
+@app.route('/message_delete')
+def message_delete():
 
+    message_delete_query = 'delete from messages where message.id = :message_id'
+
+    message_id = {'message_id': request.form['message_id']}
+
+    mysql.query_db(message_delete_query, message_id)
+
+@app.route('/comment_delete')
+def comment_delete():
+
+    comment_delete_query = 'delete from comments where comments.id = :comment_id'
+
+    comment_id = {'comment_id': request.form['comment_id']}
+
+    mysql.query_db(comment_delete_query, comment_id)
 
 app.run(debug=True)
